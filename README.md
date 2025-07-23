@@ -10,7 +10,7 @@ This project utilizes a Raspberry Pi and camera module to monitor environmental 
 ## Demo Video
 
 This is a Demstration of an image of a shark (NOT in the training dataset)
-- [AI Beach Watchdog in Action](https://youtube.com/shorts/TX7l_Vdimso)
+- [Real-time Solar Beach Monitoring and Marine Hazard Detection System in Action](https://youtube.com/shorts/FiiL1iqBk74)
 
 ## Features
 
