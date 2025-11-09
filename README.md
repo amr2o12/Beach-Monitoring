@@ -1,155 +1,163 @@
-# Beach Environmental Monitoring with Raspberry Pi
-
-This project utilizes a Raspberry Pi and camera module to monitor environmental conditions on beaches. It identifies and classifies objects like trash, beachgoers, animals, and potentially hazardous items, providing real-time insights into beach health and safety.
+# 🦈 Real-Time Beach Protector  
+### Intelligent Underwater Threat Detection and Deterrence System  
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/) 
 [![Powered by Raspberry Pi](https://img.shields.io/badge/Powered%20by-Raspberry%20Pi-orange.svg)](https://www.raspberrypi.org/)
 [![Topic: Computer Vision](https://img.shields.io/badge/Topic-Computer%20Vision-yellowgreen)](https://en.wikipedia.org/wiki/Computer_vision) 
 
+
+![System Overview](./docs/images/system_overview.png)
+
+---
+
+## 🌊 Overview  
+
+**Real-Time Beach Protector** is a modular AI-powered system designed to **detect harmful or dangerous marine species** in real time and automatically **trigger deterrent mechanisms** to protect swimmers and coastal areas.  
+
+The system combines **computer vision**, **embedded AI**, and **multi-modal deterrent activation** to monitor underwater environments and respond autonomously. It is built around a **Raspberry Pi 5 (8GB)** with **four Raspberry Pi Camera Module 3 Wide NOIR** cameras providing 360° coverage, connected via an **Arducam Quad Camera Hub**.  
+
+Infrared ring lights with light sensors provide night vision capabilities, and the Raspberry Pi interfaces with chemical, visual, and auditory deterrent modules through GPIO-controlled relays.  
+
+---
+
 ## Demo Video
 
 This is a Demstration of an image of a shark (NOT in the training dataset)
 - [Real-time Solar Beach Monitoring and Marine Hazard Detection System in Action](https://youtube.com/shorts/FiiL1iqBk74)
 
-## Features
+---
 
-- **Real-time Object Detection:** Continuously captures images and uses a deep learning model to detect and classify objects on the beach.
-- **Environmental Monitoring:** Identifies presence of dangerous/harmful sea creatures or unusual animal activity.
-- **Customizable Alerts:**  Can be configured to trigger alerts based on specific object detections, such as sending notifications when trash levels are high.
-- **Data Collection and Analysis:**  Potentially store detection data for future analysis, helping understand trends and patterns in beach usage and environmental conditions.
+## 🚀 Key Features  
 
-## Hardware Requirements
+✅ **Multi-Camera 360° Coverage**  
+- Four NOIR cameras connected via an Arducam hub  
+- Automatic IR illumination in low-light conditions  
 
-* Raspberry Pi (Model 4B or newer recommended)
-* Raspberry Pi Camera Module v1 (or compatible)
-* Power Supply for Raspberry Pi
-* SD Card (16GB or larger)
-* (Optional) Case for outdoor protection
+✅ **AI-Powered Detection**  
+- Trained on a **12,800+ image dataset** of underwater animals  
+- Detects a wide range of **harmful and dangerous species**  
+- Deployed on Raspberry Pi 5 using **EfficientNet B0** (best-performing model)  
 
-## Software Requirements
+✅ **Multi-Modal Deterrent System**  
+- **Chemical deterrent** (repellent sprayer)  
+- **Visual deterrent** (high-intensity strobe)  
+- **Auditory deterrent** (low-frequency sound)  
+- Automatically activated upon confirmed detection  
 
-* Raspberry Pi OS (Bullseye or newer recommended)
-* Python 3.7 or later
-* The following Python packages:
-    * `numpy`
-    * `matplotlib` (optional, for development)
-    * `pandas` (optional, for development) 
-    * `torch`
-    * `torchvision`
-    * `pillow`
-    * `albumentations`
-    * `scikit-learn` 
-    * `imutils`
-    * `split-folders`
-    * `textwrap3`
-    * `super-gradients`
-    * `pyOpenSSL`
-    * `markupsafe==2.0.1` 
-    * `gtts` (for text-to-speech, optional) 
-    * `pygame` (for sound playback, optional)
+✅ **Remote Logging and Reporting**  
+- Generates structured JSON logs for each detection  
+- Sends data to a **central API** for remote monitoring and government oversight  
 
-## Installation
+✅ **Scalable and Modular Architecture**  
+- Supports multiple deterrent types and camera configurations  
+- Easily extendable with new AI models or hardware accelerators  
 
-1. **Enable Camera and Legacy Support:**
-   - Open Raspberry Pi Configuration: `sudo raspi-config`
-   - Go to "Interfaces" -> "Enable Legacy Camera Support" 
-   - Reboot your Raspberry Pi: `sudo reboot`
+---
 
-2. **Configure Camera Settings:**
-   - Open the `config.txt` file: `sudo nano /boot/config.txt`
-   - Add the following lines (adjust if needed):
-     ```
-     dtoverlay=imx219
-     start_x=1
-     gpu_mem=128
-     dtoverlay=ov5647
-     ```
-   - Save and close the file.
+## 🧠 System Architecture  
 
-3. **Install Snapd and CMake:**
-   - Update your package lists: `sudo apt update`
-   - Install Snapd: `sudo apt install snapd`
-   - Reboot your Pi: `sudo reboot`
-   - Install CMake: `sudo snap install cmake --channel=3.22/stable --classic` 
+![Architecture](./docs/images/architecture_diagram.png)
 
-4. **Install Python Packages:**
-   - Install required packages: `pip install -r requirements.txt`
-   - (You'll need a `requirements.txt` file containing the packages listed in "Software Requirements") 
+The system integrates:  
 
-5. **Configure Audio (Optional):**
-   - If you want audio feedback, install mpg123: `sudo apt install mpg123`
-   - Modify `/etc/asound.conf` (create if it doesn't exist) to set your audio output device:
-     ```
-     pcm.!default{
-         type hw
-         card 1 
-     }
-     ```
+- **Hardware Layer:**  
+  - Raspberry Pi 5 (8GB)  
+  - 4× Camera Module 3 Wide NOIR  
+  - Arducam Quad Camera Hub  
+  - IR LED rings + light sensors  
+  - Deterrent modules (chemical, strobe, sound)  
+  - Optional GPS module  
 
-6. **Create and Configure Systemd Service (Optional):**
-   - For automatic startup, create a service file: `sudo nano /etc/systemd/system/myapp.service`
-   - Paste the service configuration, modifying paths as needed:
-     ```
-     [Unit]
-     Description=Beach Monitoring Service
-     After=network-online.target
+- **Software Layer:**  
+  - Python-based inference pipeline  
+  - TensorFlow Lite / ONNX runtime for edge deployment  
+  - Async data logging and deterrent control threads  
+  - RESTful API interface for reporting  
 
-     [Service]
-     Environment=DISPLAY=:0
-     Environment=XAUTHORITY=/home/pi/.Xauthority
-     Type=simple
-     User=pi 
-     WorkingDirectory=/home/pi/Desktop/your-project-folder 
-     ExecStart=/usr/bin/python3 /home/pi/Desktop/your-project-folder/model_rpi_test.py
-     Restart=always
-     StandardOutput=syslog
-     StandardError=syslog
+---
 
-     [Install]
-     WantedBy=multi-user.target 
-     ```
-   - Enable and start the service:
-     ```bash
-     sudo systemctl enable myapp.service
-     sudo systemctl start myapp.service
-     ```
-   - Check the service status: `sudo journalctl -u myapp.service`
+## 🧩 Methodology  
 
-7. **Download the Pre-trained Model:**
-   - Download the model checkpoint file (`ckpt_best.pth`) and place it in the `model` directory within your project folder.
+1. **Data Collection & Preprocessing**  
+   - Dataset includes 23 marine species (fish, shark, jellyfish, etc.)  
+   - Augmentation for varying light and turbidity conditions  
+   - Dataset split: 80% train / 20% validation  
 
-## Usage
+2. **Model Training**  
+   - Three CNN architectures implemented:  
+     1. RegNetY800 (baseline)  
+     2. EfficientNet B0 *(best performer)*  
+     3. EfficientNet B3 (advanced, heavier variant)  
+   - Training performed on NVIDIA A100 GPU  
+   - Final model quantized for Raspberry Pi deployment  
 
-1. **Connect your Raspberry Pi Camera.**
-2. **Navigate to the project directory:** `cd /path/to/your/project`
-3. **Run the main script:** `python3 model_rpi_test.py` 
+3. **Real-Time Detection**  
+   - Inference via TensorFlow Lite on Pi  
+   - Species probability threshold → deterrent activation  
+   - Detection logged locally and via JSON API  
 
-## Project Structure
-Use code with caution.
-Markdown
-beach-monitoring/
-├── model/
-│ └── ckpt_best.pth # Pre-trained model checkpoint
-├── photos/ # Directory to store captured images
-├── voice/ # Directory for audio files (if using audio alerts)
-└── model_rpi_test.py # Main Python script
-## Customization
+4. **Deterrent Activation Process**  
+   - Model prediction > confidence threshold  
+   - GPIO control triggers deterrent modules  
+   - Event metadata stored with timestamp, species, and confidence  
 
-###  Configure Object Classes and Alert Logic:
+---
 
-   - **Open `model_rpi_test.py` in a text editor:**
-     ```python
-     class_names = ['Trash', 'Beach Umbrella', 'Person', 'Seagull', 'Dog']  # Update with your classes
+## 📈 Results Summary  
 
-     friendly_fire = ['Beach Umbrella', 'Person', 'Seagull'] # Objects not considered alerts
-     enemy_fire = ['Trash', 'Dog'] # Objects to trigger alerts 
-     ```
-   - **Modify `class_names`:** Replace with the specific object names your model is trained to recognize.
-   - **Adjust `friendly_fire` and `enemy_fire`:**  Categorize objects for alert logic (what requires notification). 
+| Model | Accuracy (%) | Inference Time (s) | Notes |
+|:------|:-------------:|:------------------:|:------|
+| RegNetY800 | 82.34 | 0.89 | Initial prototype |
+| EfficientNet B0 | **87.59** | **0.51** | Best model for Pi |
+| EfficientNet B3 | 89.02 | 1.23 | Too heavy for real-time |
+
+**Performance:**  
+- Achieved real-time inference at ~2 FPS on Raspberry Pi 5  
+- IR-enhanced visibility enables operation in low light  
+- Reliable detection of marine hazards including jellyfish and sharks  
+
+---
+
+
+## 🌐 JSON Reporting Format
+Each detection event generates a structured JSON entry:
+
+json
+{
+  "timestamp": "2025-11-09T18:22:31Z",
+  "species": "Shark",
+  "confidence": 0.88,
+  "gps": [21.4563, 39.2531],
+}
+
+## 🔮 Future Work
+Expand dataset with rare or region-specific species
+
+Integrate AI accelerators (Hailo-8L, Jetson) for higher throughput
+
+Deploy multi-sensor networks for larger beach coverage
+
+Add cloud dashboard for live visualization and analytics
+
+Implement adaptive deterrent intensity based on species and context
+
+
+## 📚 References
+The project builds upon recent research in underwater computer vision and shark deterrence systems, including:
+
+ADA-SHARK (Martin et al., 2024)
+
+Shark-EYE (Merencilla et al., 2021)
+
+Underwater Fish Detection using Mask R-CNN (Khai et al., 2022)
+
+Shark Detection from Aerial Imagery (Sharma et al., 2018)
+
+Hart & Collin, Shark Senses and Repellents (2015)
 
 
 
-## License
+Keywords: Underwater AI • Marine Safety • EfficientNet • Raspberry Pi • Real-Time Detection • Multi-Modal Deterrent
 
-This project is licensed under the MIT License.
+
